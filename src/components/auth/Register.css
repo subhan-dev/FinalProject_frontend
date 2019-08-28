@@ -1,0 +1,43 @@
+.cardRegister{
+    border-radius: 0px !important;
+    border-color: black;
+    margin-top: 50px;
+}
+
+.bodyRegister{
+    border: 1px solid black;
+    padding: 30px !important;
+}
+
+.inputRegister{
+    border-radius: 0px !important;
+    border-color: black;
+    font-size: 10px !important;
+    font-weight: 400 !important;
+    letter-spacing: 1px !important;
+    line-height: 20px !important;
+}
+
+.inputRegister:focus{
+    outline: none !important;
+    box-shadow: none !important;
+    border-color: black;
+}
+
+.registerText {
+    color: black !important;
+}
+
+.registerText:hover{
+    color: rgb(218, 214, 214) !important;
+    text-decoration: none;
+}
+
+/* .buttonRegister{
+    border-radius: 0px !important;
+} */
+
+.registerSuccessAlert {
+    font-family: 'Roboto Condensed', sans-serif;
+    color: rgb(5, 173, 5);
+}

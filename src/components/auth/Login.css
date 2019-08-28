@@ -1,0 +1,8 @@
+.loginText1{
+    text-transform: uppercase !important;
+}
+
+.loginText1 .linkLogin:hover{
+    text-decoration: none;
+    color:  rgb(218, 214, 214) !important;
+}
