@@ -1,6 +1,57 @@
 import React, { Component } from 'react'
+import axios from '../../config/axios';
+import {connect} from 'react-redux'
+import { Link } from 'react-router-dom';
 
 class Cart extends Component {
+
+    state = {
+        carts: [],
+        total: 0
+    }
+
+    getCart = async () => {
+        try {
+            const res = await axios.get(`/get-carts/${this.props.user.id}`)
+            // console.log(res.data)
+            this.setState({carts: res.data})
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+    componentDidMount() {
+        this.getCart()
+        // this.renderTotal()
+    }
+
+    renderCart = () => {
+        return this.state.carts.map(item => {
+            return (
+                <tr key={item.id}>
+                    <td>{item.id}</td>
+                    <td>{item.name}</td>
+                    <td>{item.price}</td>
+                    <td>{item.quantity}</td>
+                    <td>{item.quantity * item.price}</td>
+                    <td>
+                        <button className="btn btn-primary mr-2" onClick={() => {this.setState({selectedId: item.id})}}>Edit</button>
+                        <button className="btn btn-danger" onClick={() => this.handleDeleteCategory(item.id)}>Delete</button>
+                    </td>
+                </tr>
+            )
+        })
+    }
+
+    renderTotal = () => {
+        let totalCart = 0
+        this.state.carts.forEach(item => {
+            totalCart += (item.price * item.quantity)
+        })
+
+        return totalCart
+    }
+
     render() {
         return (
             <div className="container mt-5">
@@ -18,7 +69,7 @@ class Cart extends Component {
                                 </tr>
                             </thead>
                             <tbody>
-                                
+                                {this.renderCart()}
                             </tbody>
                         </table>
                     </div>
@@ -40,7 +91,7 @@ class Cart extends Component {
                                     <h5>Total</h5>
                                 </div>
                                 <div className="d-inline-block ml-5">
-                                    <h5>Rp</h5>
+                                    <h5>Rp {this.renderTotal()}</h5>
                                 </div>
                             </div>
                             <hr/>
@@ -56,9 +107,9 @@ class Cart extends Component {
                             {/* <button type="button" className="btn btn-dark btn-sm">+</button>
                             <input type="text" style={{width: '50px'}} className="text-center" value="1"></input>
                             <button type="button" className="btn btn-dark btn-sm">-</button> */}
-
-                            <p><button type="button" className="btn btn-dark btn-md mt-5 btn-block">Checkout</button></p>
-
+                            <Link to="/checkout">
+                                <p><button type="button" className="btn btn-dark btn-md mt-5 btn-block">Checkout</button></p>
+                            </Link>
                             {/* <p className="card-text">Category</p> */}
                         </div>
                     </div>
@@ -69,4 +120,9 @@ class Cart extends Component {
     }
 }
 
-export default Cart
+const mapStateToProps = state => {
+    return {
+        user: state.auth
+    }
+}
+export default connect(mapStateToProps)(Cart)

@@ -3,13 +3,27 @@ import {Link} from 'react-router-dom';
 import { MDBIcon } from "mdbreact";
 import './Product.css'
 import axios from '../../config/axios';
+import {connect} from 'react-redux'
+import { async } from 'q';
+import Swal from 'sweetalert2';
 
 class Product extends Component {
 
     state = {
         productDetail: {},
         size: [],
-        stock: null
+        quantity: 1,
+        size_id: "",
+        redirect: false
+    }
+
+    increment = () => {
+        this.setState({quantity: this.state.quantity + 1})
+    }
+    decrement = () => {
+        if(this.state.quantity > 1) {
+            this.setState({quantity: this.state.quantity - 1})
+        }
     }
 
     getProductDetail = async() => {
@@ -45,8 +59,39 @@ class Product extends Component {
         })
     }
 
+    addToCart = async () => {
+        // console.log(!this.props.user.isAdmin)
+        
+        if(!this.props.user.isAdmin && this.props.user.username) {
+            if(this.state.size_id){
+                try {
+                    const res = await axios.post('/carts', {
+                        product_id: this.state.productDetail.id,
+                        user_id: this.props.user.id,
+                        size_id: this.state.size_id,
+                        quantity: this.state.quantity
+                    })
+                    console.log(res)
+                    if(res.data.length > 0) {
+                        Swal.fire(
+                            'Ditambahkan',
+                            'You clicked the button!',
+                            'success'
+                        )
+                    }
+                } catch (error) {
+                    console.log(error)
+                }
+                // alert('ok')
+            }
+        } else {
+            this.setState({redirect: true})
+        }
+    }
+
     render() {
-        const { productDetail } = this.state
+        const { productDetail, quantity, size_id } = this.state
+        console.log(productDetail)
         return (
             <div className="container mt-5">
                 <div className="row justify-content-center">
@@ -64,16 +109,16 @@ class Product extends Component {
                                 {productDetail.description}
                                 </div>
                                 <h6 className="mt-3 mb-0">size</h6>
-                                <select className="custom-select">
-                                    <option>Choose your option</option>
+                                <select className="custom-select" value={this.state.size_id} onChange={(event) => this.setState({size_id: event.target.value})}>
+                                    <option value="">Choose your option</option>
                                     {this.renderSize()}
                                 </select>
-                                <h5 className="mt-4">Stock</h5>
-                                <button type="button" className="btn btn-dark btn-sm">+</button>
-                                <input type="text" style={{width: '50px'}} className="text-center" value="1"></input>
-                                <button type="button" className="btn btn-dark btn-sm">-</button>
+                                {/* <h5 className="mt-4">Stock</h5> */}
+                                <button type="button" className="btn btn-dark btn-sm" onClick={this.decrement}>-</button>
+                                <input type="text" style={{width: '50px'}} className="text-center" value={this.state.quantity} onChange={(event) => this.setState({quantity: parseInt(event.target.value)})}></input>
+                                <button type="button" className="btn btn-dark btn-sm" onClick={this.increment}>+</button>
 
-                                <p><button type="button" className="btn btn-dark btn-md mt-5 btn-block">ADD TO CART</button></p>
+                                <p><button type="button" className="btn btn-dark btn-md mt-5 btn-block" onClick={this.addToCart}>ADD TO CART</button></p>
 
                                 {/* <p className="card-text">Category</p> */}
                             </div>
@@ -84,5 +129,9 @@ class Product extends Component {
         )
     }
 }
-
-export default Product
+const mapStateToProps = state => {
+    return {
+        user: state.auth
+    }
+}
+export default connect(mapStateToProps)(Product)

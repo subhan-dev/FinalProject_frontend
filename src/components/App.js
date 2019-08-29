@@ -11,6 +11,8 @@ import Footer from './footer/Footer'
 import Shop from './shop/Shop'
 import Product from './product/Product'
 import Cart from './order/Cart'
+import Checkout from './order/Checkout'
+import PaymentUpload from './order/PaymentUpload'
 
 import { keepLogin } from '../actions/index'
 
@@ -45,6 +47,8 @@ class App extends Component {
                         <Route path="/shop" component={Shop}/>
                         <Route path="/product-detail/:id" component={Product}/>
                         <Route path="/cart" component={Cart}/>
+                        <Route path="/checkout" component={Checkout}/>
+                        <Route path="/payment-upload" component={PaymentUpload}/>
 
                         <Route path="/manage-product" component={ManageProduct}/>
                         <Route path="/add-product" component={AddProduct}/>
