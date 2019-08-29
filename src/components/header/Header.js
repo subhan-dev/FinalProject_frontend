@@ -14,6 +14,9 @@ class Header extends Component {
     state = {
         category: []
     }
+    componentDidMount() {
+        this.getCategory()
+    }
 
     getCategory = async () => {
         try {
@@ -25,9 +28,9 @@ class Header extends Component {
         }
     }
     renderCategory = () => {
-        this.state.category.map(item => {
+        return this.state.category.map(item => {
             return (
-                <NavDropdown.Item href="#action/3.2">Another action</NavDropdown.Item>
+                <NavDropdown.Item key={item.id}>{item.name}</NavDropdown.Item>
             )
         })
     }
@@ -44,8 +47,7 @@ class Header extends Component {
                             <Nav.Link className="text-secondary" as={Link} to='/'>HOME</Nav.Link>
                             <NavDropdown title="SHOP" >
                                 <NavDropdown.Item as={Link} to='/shop'>All</NavDropdown.Item>
-                                <NavDropdown.Item href="#action/3.2">Another action</NavDropdown.Item>
-                                <NavDropdown.Item href="#action/3.3">Something</NavDropdown.Item>
+                                {this.renderCategory()}
                             </NavDropdown>
                             <Nav.Link className="text-secondary" as={Link} to='/howtoorder'>HOW TO ORDER</Nav.Link>
                         </Nav>
@@ -65,8 +67,7 @@ class Header extends Component {
                             <Nav.Link className="text-secondary" as={Link} to='/'>HOME</Nav.Link>
                             <NavDropdown title="SHOP" >
                             <NavDropdown.Item as={Link} to='/shop'>All</NavDropdown.Item>
-                                <NavDropdown.Item href="#action/3.2">Another action</NavDropdown.Item>
-                                <NavDropdown.Item href="#action/3.3">Something</NavDropdown.Item>
+                                {this.renderCategory()}
                             </NavDropdown>
                             <Nav.Link className="text-secondary" as={Link} to='/howtoorder'>HOW TO ORDER</Nav.Link>
                         </Nav>
@@ -87,6 +88,7 @@ class Header extends Component {
                             <Nav.Link className="text-secondary" as={Link} to='/manage-product'>Manage Product</Nav.Link>
                             <Nav.Link className="text-secondary" as={Link} to='/manage-category'>Manage Category</Nav.Link>
                             <Nav.Link className="text-secondary" as={Link} to='/manage-order'>Manage Order</Nav.Link>
+                            <Nav.Link className="text-secondary" as={Link} to='/manage-stock'>Manage Stock</Nav.Link>
                         </Nav>
                         <Nav.Link className="text-secondary nav-text" onClick={this.props.onLogout}>LOGOUT</Nav.Link>
                     </Navbar.Collapse>

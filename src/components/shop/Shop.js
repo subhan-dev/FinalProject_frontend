@@ -1,11 +1,15 @@
 import React, { Component } from "react";
 import { MDBCollapse, Button } from "mdbreact";
 import {  MDBRow, MDBCol, MDBCard, MDBCardImage, MDBCardBody, MDBBadge, MDBCollapseHeader } from "mdbreact";
+import {Link} from 'react-router-dom'
+import axios from '../../config/axios'
 
 class Shop extends Component {
     state={
         collapseID: "",
-        collapseID2: ""
+        collapseID2: "",
+        products: [],
+        brand: []
     }
 
     toggleCollapse = collapseID => () =>
@@ -16,6 +20,72 @@ class Shop extends Component {
     this.setState(prevState => ({
         collapseID2: prevState.collapseID2 !== collapseID2 ? collapseID2 : ""
     }));
+
+    componentDidMount(){
+        this.getProducts()
+        this.getBrand()
+    }
+
+    getBrand = async () => {
+        try {
+            const res = await axios.get('/brands')
+            // console.log(res.data)
+            this.setState({brand: res.data})
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+    getProducts = async () => {
+        try {
+            const res = await axios.get('/products')
+            this.setState({products: res.data})
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+    renderProduct =() =>{
+        return this.state.products.map(item => {
+            return (
+                <MDBCol lg="4" className="mb-lg-5 mb-4" key={item.id}>
+                    <Link to={`/product-detail/${item.id}`}>
+                        <MDBCard className="align-items-center">
+                        <MDBCardImage
+                            src="https://shiningbright.co.id/wp-content/uploads/2019/07/tshirt_0331.jpg"
+                            top
+                            alt="sample photo"
+                            overlay="white-slight"
+                        />
+                        <MDBCardBody className="text-center">
+                            <strong>
+                                <a href="#!" className="dark-grey-text">
+                                {item.name}{" "}
+                                </a>
+                            </strong>
+                            <h6 className="font-weight-bold blue-text">
+                                {item.price}
+                            </h6>
+                        </MDBCardBody>
+                        </MDBCard>
+                    </Link>
+                </MDBCol>
+            )
+        })
+    }
+
+    renderBrand = () => {
+        return this.state.brand.map(item => {
+            return (
+                <label className="form-check" key={item.id}>
+                    <input className="form-check-input" type="checkbox" value=""/>
+                    <span className="form-check-label">
+                        {item.name}
+                    </span>
+                </label> 
+            )
+        })
+    }
     
 
     render() {
@@ -49,7 +119,8 @@ class Shop extends Component {
                                     <span className="form-check-label">
                                         RSCH
                                     </span>
-                                </label> 
+                                </label>
+                                {this.renderBrand()}
                             </form>
                             </div>
                         </MDBCollapse>
@@ -78,26 +149,7 @@ class Shop extends Component {
                 </MDBCol>
                     <div className="col-9">
                     <div className="row">
-                        <MDBCol lg="4" className="mb-lg-5 mb-4">
-                            <MDBCard className="align-items-center">
-                            <MDBCardImage
-                                src="https://shiningbright.co.id/wp-content/uploads/2019/07/tshirt_0331.jpg"
-                                top
-                                alt="sample photo"
-                                overlay="white-slight"
-                            />
-                            <MDBCardBody className="text-center">
-                                <strong>
-                                    <a href="#!" className="dark-grey-text">
-                                    Denim shirt{" "}
-                                    </a>
-                                </strong>
-                                <h6 className="font-weight-bold blue-text">
-                                    120$
-                                </h6>
-                            </MDBCardBody>
-                            </MDBCard>
-                        </MDBCol>
+                        {this.renderProduct()}
                         <MDBCol lg="4" className="mb-lg-0 mb-4">
                             <MDBCard className="align-items-center">
                             <MDBCardImage

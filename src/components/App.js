@@ -10,12 +10,15 @@ import Header from './header/Header'
 import Footer from './footer/Footer'
 import Shop from './shop/Shop'
 import Product from './product/Product'
+import Cart from './order/Cart'
 
 import { keepLogin } from '../actions/index'
 
 import ManageProduct from './admin/manageproduct/ManageProduct'
 import AddProduct from './admin/manageproduct/AddProduct'
 import EditProduct from './admin/manageproduct/EditProduct'
+import ManageStock from './admin/managestock/ManageStock'
+import ManageCategory from './admin/managecategory/ManageCategory'
 
 const cookie = new cookies()
 
@@ -40,11 +43,14 @@ class App extends Component {
                         <Route path="/login" component={Login}/> 
                         <Route path="/register" component={Register}/>
                         <Route path="/shop" component={Shop}/>
-                        <Route path="/product" component={Product}/>
+                        <Route path="/product-detail/:id" component={Product}/>
+                        <Route path="/cart" component={Cart}/>
 
                         <Route path="/manage-product" component={ManageProduct}/>
                         <Route path="/add-product" component={AddProduct}/>
                         <Route path="/edit-product/:id" component={EditProduct}/>
+                        <Route path="/manage-stock" component={ManageStock}/>
+                        <Route path="/manage-category" component={ManageCategory}/>
                         <Footer />
                         {/* <Route path="/productdetail" component={ProductDetail}/> */}
                         {/* <Footer /> */}

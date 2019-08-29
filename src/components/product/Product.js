@@ -2,27 +2,51 @@ import React, { Component } from 'react'
 import {Link} from 'react-router-dom';
 import { MDBIcon } from "mdbreact";
 import './Product.css'
+import axios from '../../config/axios';
 
 class Product extends Component {
 
     state = {
-        options: [
-            {
-                text: "Option 1",
-                value: "1"
-            },
-            {
-                text: "Option 2",
-                value: "2"
-            },
-            {
-                text: "Option 3",
-                value: "3"
-            }
-        ]
-    };
+        productDetail: {},
+        size: [],
+        stock: null
+    }
+
+    getProductDetail = async() => {
+        try {
+           const res = await axios.get(`/products/${this.props.match.params.id}`)
+
+           this.setState({productDetail: res.data[0]})
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+    getSize = async () => {
+        try {
+            const res = await axios.get(`/size/${this.props.match.params.id}`)
+            this.setState({size: res.data})
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+
+    componentDidMount() {
+        this.getProductDetail()
+        this.getSize()
+    }
+
+    renderSize = () => {
+        return this.state.size.map(item => {
+            return (
+                <option value={item.id}>{item.size_name}</option>
+            )
+        })
+    }
 
     render() {
+        const { productDetail } = this.state
         return (
             <div className="container mt-5">
                 <div className="row justify-content-center">
@@ -34,26 +58,24 @@ class Product extends Component {
                     <div className="col-md-5">
                         <div className="card" style={{border: "none"}}>
                             <div className="card-body">
-                                <h2 className="card-title">Card title</h2>
-                                <h4 className="mt-3">Rp 200.000</h4>
+                                <h2 className="card-title">{productDetail.name}</h2>
+                                <h4 className="mt-3">{productDetail.price}</h4>
                                 < div className="card-text">
-                                Lorem Ipsum is simply dummy text of the printing and typesetting industry.
+                                {productDetail.description}
                                 </div>
                                 <h6 className="mt-3 mb-0">size</h6>
                                 <select className="custom-select">
                                     <option>Choose your option</option>
-                                    <option value="1">Option 1</option>
-                                    <option value="2">Option 2</option>
-                                    <option value="3">Option 3</option>
+                                    {this.renderSize()}
                                 </select>
-                                <h4 className="mt-4">Stock</h4>
+                                <h5 className="mt-4">Stock</h5>
                                 <button type="button" className="btn btn-dark btn-sm">+</button>
                                 <input type="text" style={{width: '50px'}} className="text-center" value="1"></input>
                                 <button type="button" className="btn btn-dark btn-sm">-</button>
 
                                 <p><button type="button" className="btn btn-dark btn-md mt-5 btn-block">ADD TO CART</button></p>
 
-                                <p className="card-text">Category</p>
+                                {/* <p className="card-text">Category</p> */}
                             </div>
                         </div>
                     </div>
