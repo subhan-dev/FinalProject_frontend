@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import axios from '../../config/axios';
 import {connect} from 'react-redux'
 import { Link } from 'react-router-dom';
+import Swal from 'sweetalert2';
 
 class Cart extends Component {
 
@@ -25,18 +26,24 @@ class Cart extends Component {
         // this.renderTotal()
     }
 
+    handleDeleteCart = async (id) => {
+        console.log(id)
+        const res = await axios.delete(`/carts-del/${id}`)
+        console.log(res.data)
+        this.getCart()
+    }
+
     renderCart = () => {
         return this.state.carts.map(item => {
             return (
                 <tr key={item.id}>
-                    <td>{item.id}</td>
                     <td>{item.name}</td>
+                    <td>{item.size_name}</td>
                     <td>{item.price}</td>
                     <td>{item.quantity}</td>
                     <td>{item.quantity * item.price}</td>
                     <td>
-                        <button className="btn btn-primary mr-2" onClick={() => {this.setState({selectedId: item.id})}}>Edit</button>
-                        <button className="btn btn-danger" onClick={() => this.handleDeleteCategory(item.id)}>Delete</button>
+                        <button className="btn btn-danger" onClick={() => this.handleDeleteCart(item.id)}>Deleted</button>
                     </td>
                 </tr>
             )
@@ -60,8 +67,8 @@ class Cart extends Component {
                         <table className="table table-hover mb-5 mt-4">
                             <thead>
                                 <tr>
-                                    <th scope="col">Image</th>
                                     <th scope="col">Name</th>
+                                    <th scope="col">Size</th>
                                     <th scope="col">Price</th>
                                     <th scope="col">Quantity</th>
                                     <th scope="col">Total</th>
@@ -76,15 +83,6 @@ class Cart extends Component {
                     <div className="card col-4" style={{border:'none'}}>
                         <div className="card-body">
                             <h2 className="card-title">Cart Total</h2>
-                            <hr/>
-                            <div className="mt-3">
-                                <div className="d-inline-block mr-4">
-                                    <h5>Subtotal</h5>
-                                </div>
-                                <div className="d-inline-block ml-4">
-                                    <h5>Rp</h5>
-                                </div>
-                            </div>
                             <hr/>
                             <div className="mt-3">
                                 <div className="d-inline-block mr-4">

@@ -5,7 +5,7 @@ import {Link} from 'react-router-dom'
 import axios from '../../config/axios'
 import { async } from "q";
 
-class Shop extends Component {
+class ShopCategory extends Component {
     state={
         collapseID: "",
         collapseID2: "",
@@ -33,7 +33,12 @@ class Shop extends Component {
         this.getBrand()
 
     }
-    
+    async componentWillUpdate(prevProps){
+        
+        if(this.props.match.params.id !== prevProps.match.params.id) {
+            await this.getProducts2(prevProps.match.params.id)
+        }
+    }
 
     getBrand = async () => {
         try {
@@ -43,21 +48,31 @@ class Shop extends Component {
             console.log(error)
         }
     }
-    
-
-    getProducts = async () => {
+    getProducts2 = async (id) => {
         try {
-            const res = await axios.get(`/products`)
+            const res = await axios.get(`/products-category/${id}`)
             this.setState({products: res.data})
         } catch (error) {
             console.log(error)
-        }  
+        }
+        
+    }
+
+    getProducts = async () => {
+        try {
+            const res = await axios.get(`/products-category/${this.props.match.params.id}`)
+            this.setState({products: res.data})
+        } catch (error) {
+            console.log(error)
+        }
+        
+        
     }
 
     renderProduct =(products) =>{
         return products.map(item => {
             return (
-                <MDBCol lg="4" className="mb-lg-5 mb-4">
+                <MDBCol lg="4" className="mb-lg-5 mb-4" key={item.id}>
                     <Link to={`/product-detail/${item.id}`}>
                         <MDBCard className="align-items-center">
                         <MDBCardImage
@@ -107,7 +122,7 @@ class Shop extends Component {
     render() {
         let product = this.state.products
         const { collapseID, collapseID2, search } = this.state;
-        // console.log(search)
+        console.log(search)
         let cariStr = search.searchString.trim().toLowerCase();
         let minimal = parseInt(search.min)
         let maksimal = parseInt(search.max)
@@ -196,4 +211,6 @@ class Shop extends Component {
     }
 }
 
-export default Shop;
+export default ShopCategory;
+
+

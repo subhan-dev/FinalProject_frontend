@@ -93,7 +93,7 @@ class Checkout extends Component {
         const bank_id = this.bank.value
         const kurir = this.kurir.value
 
-        if(penerima && address && phone && city && kode_pos && bank_id && kurir) {
+        if(penerima && address && phone && city && kode_pos && bank_id && kurir && this.state.carts.length > 0) {
             try {
                 const resAddress = await axios.post(`/address`, {
                     penerima, address, phone, city, kode_pos, user_id: this.props.user.id
@@ -103,11 +103,18 @@ class Checkout extends Component {
                     user_id: this.props.user.id,
                     total_harga: this.renderTotal(),
                     shipping_id: kurir,
-                    bank_id: bank_id
+                    bank_id: bank_id,
+                    alamat_id: resAddress.data[0].id
                 })
                 // console.log(resOrder.data)
-                const resOrderDetail = await axios.post('/order-detail', [this.handleInsertOrderDetail(resOrder.data[0].id)])
-                // console.log(resOrderDetail)
+                const resCart = await axios.get(`/get-carts-migrate/${this.props.user.id}`)
+                let arrayCart = []
+                for(let i = 0; i < resCart.data.length; i++) {
+                    arrayCart.push([resCart.data[i].product_id, resCart.data[i].quantity, resCart.data[i].size_id, resOrder.data[0].id])
+                }
+
+                const resOrderDetail = await axios.post('/order-detail', [arrayCart])
+                console.log(resOrderDetail)
                 await axios.delete(`/carts/${this.props.user.id}`)
 
                 this.setState({order: true})
@@ -116,18 +123,18 @@ class Checkout extends Component {
             }
         }
     }
-    handleInsertOrderDetail = (order_id) => {
-        let arrayCart = []
-        let carts = this.state.carts
+    // handleInsertOrderDetail = (order_id) => {
+    //     let arrayCart = []
+    //     let carts = this.state.carts
 
-        for(let i = 0; i < carts.length; i++) {
-            arrayCart.push([carts[i].product_id, carts[i].quantity, carts[i].size_id, order_id])
-        }
-        return arrayCart
-    }
+    //     for(let i = 0; i < carts.length; i++) {
+    //         arrayCart.push([carts[i].product_id, carts[i].quantity, carts[i].size_id, order_id])
+    //     }
+    //     return arrayCart
+    // }
 
     render() {
-        if(this.state.order) return <Redirect to="/cart"></Redirect>
+        if(this.state.order) return <Redirect to="/list-order"></Redirect>
         return (
             <div className="container mt-5">
                 <div className="row">

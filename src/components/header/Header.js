@@ -30,7 +30,7 @@ class Header extends Component {
     renderCategory = () => {
         return this.state.category.map(item => {
             return (
-                <NavDropdown.Item key={item.id}>{item.name}</NavDropdown.Item>
+                <NavDropdown.Item key={item.id} as={Link} to={`/shop-category/${item.id}`}>{item.name_category}</NavDropdown.Item>
             )
         })
     }
@@ -46,7 +46,7 @@ class Header extends Component {
                         <Nav className="mr-auto ml-auto nav-text">
                             <Nav.Link className="text-secondary" as={Link} to='/'>HOME</Nav.Link>
                             <NavDropdown title="SHOP" >
-                                <NavDropdown.Item as={Link} to='/shop'>All</NavDropdown.Item>
+                                <NavDropdown.Item as={Link} to='/all-shop'>All</NavDropdown.Item>
                                 {this.renderCategory()}
                             </NavDropdown>
                             <Nav.Link className="text-secondary" as={Link} to='/howtoorder'>HOW TO ORDER</Nav.Link>
@@ -66,7 +66,7 @@ class Header extends Component {
                         <Nav.Link className="text-secondary" as={Link} to='/profile'>PROFILE</Nav.Link>
                             <Nav.Link className="text-secondary" as={Link} to='/'>HOME</Nav.Link>
                             <NavDropdown title="SHOP" >
-                            <NavDropdown.Item as={Link} to='/shop'>All</NavDropdown.Item>
+                            <NavDropdown.Item as={Link} to='/all-shop'>All</NavDropdown.Item>
                                 {this.renderCategory()}
                             </NavDropdown>
                             <Nav.Link className="text-secondary" as={Link} to='/howtoorder'>HOW TO ORDER</Nav.Link>
@@ -88,7 +88,8 @@ class Header extends Component {
                             <Nav.Link className="text-secondary" as={Link} to='/manage-product'>Manage Product</Nav.Link>
                             <Nav.Link className="text-secondary" as={Link} to='/manage-category'>Manage Category</Nav.Link>
                             <Nav.Link className="text-secondary" as={Link} to='/manage-order'>Manage Order</Nav.Link>
-                            <Nav.Link className="text-secondary" as={Link} to='/manage-stock'>Manage Stock</Nav.Link>
+                            <Nav.Link className="text-secondary" as={Link} to='/history-transaksi'>History Transaksi</Nav.Link>
+                            {/* <Nav.Link className="text-secondary" as={Link} to='/manage-stock'>Manage Stock</Nav.Link> */}
                         </Nav>
                         <Nav.Link className="text-secondary nav-text" onClick={this.props.onLogout}>LOGOUT</Nav.Link>
                     </Navbar.Collapse>

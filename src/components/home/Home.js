@@ -6,96 +6,54 @@ import './Home.css'
 import slider from './slider.jpg'
 import slider2 from './slider2.jpg.jpg'
 import slider3 from './slider3.jpg'
+import axios from '../../config/axios';
+import { Link } from 'react-router-dom';
 
 class Home extends Component {
 
-    EcommercePage = () => {
-        return (
-            <section className="text-center my-5">
-                <MDBRow>
-                    <MDBCol lg="3" md="6" className="mb-lg-0 mb-4">
+    state = {
+        newArrival: []
+    }
+    getNewArrival = async() => {
+        try {
+            const res = await axios.get('/productsNew')
+            this.setState({newArrival: res.data})
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+    componentDidMount() {
+        this.getNewArrival()
+
+    }
+
+    renderNewArrival = () => {
+        return this.state.newArrival.map(item => {
+            return (
+                <MDBCol lg="3" md="6" className="mb-lg-0 mb-4">
+                    <Link to={`/product-detail/${item.id}`}>
                         <MDBCard className="align-items-center">
                         <MDBCardImage
-                            src="https://shiningbright.co.id/wp-content/uploads/2019/07/tshirt_0331.jpg"
+                            src={`http://localhost:2019/products/image/${item.image}`}
                             top
-                            alt="sample photo"
+                            alt={item.name}
                             overlay="white-slight"
+                            style={{height: '215px'}}
                         />
-                        <MDBCardBody className="text-center">
+                        <MDBCardBody className="text-center text-secondary">
                             <strong>
-                                <a href="#!" className="dark-grey-text">
-                                Denim shirt{" "}
-                                </a>
+                                {item.name}
                             </strong>
-                            <h6 className="font-weight-bold blue-text">
-                                120$
+                            <h6>
+                                {item.price}
                             </h6>
                         </MDBCardBody>
                         </MDBCard>
-                    </MDBCol>
-                    <MDBCol lg="3" md="6" className="mb-lg-0 mb-4">
-                        <MDBCard className="align-items-center">
-                        <MDBCardImage
-                            src="https://shiningbright.co.id/wp-content/uploads/2019/07/tshirt_0331.jpg"
-                            top
-                            alt="sample photo"
-                            overlay="white-slight"
-                        />
-                        <MDBCardBody className="text-center">
-                            <strong>
-                                <a href="#!" className="dark-grey-text">
-                                Denim shirt{" "}
-                                </a>
-                            </strong>
-                            <h6 className="font-weight-bold blue-text">
-                                120$
-                            </h6>
-                        </MDBCardBody>
-                        </MDBCard>
-                    </MDBCol>
-                    <MDBCol lg="3" md="6" className="mb-lg-0 mb-4">
-                        <MDBCard className="align-items-center">
-                        <MDBCardImage
-                            src="https://shiningbright.co.id/wp-content/uploads/2019/07/tshirt_0331.jpg"
-                            top
-                            alt="sample photo"
-                            overlay="white-slight"
-                        />
-                        <MDBCardBody className="text-center">
-                            <strong>
-                                <a href="#!" className="dark-grey-text">
-                                Denim shirt{" "}
-                                </a>
-                            </strong>
-                            <h6 className="font-weight-bold blue-text">
-                                120$
-                            </h6>
-                        </MDBCardBody>
-                        </MDBCard>
-                    </MDBCol>
-                    <MDBCol lg="3" md="6" className="mb-lg-0 mb-4">
-                        <MDBCard className="align-items-center">
-                        <MDBCardImage
-                            src="https://shiningbright.co.id/wp-content/uploads/2019/07/tshirt_0331.jpg"
-                            top
-                            alt="sample photo"
-                            overlay="white-slight"
-                        />
-                        <MDBCardBody className="text-center">
-                            <strong>
-                                <a href="#!" className="dark-grey-text">
-                                Denim shirt{" "}
-                                </a>
-                            </strong>
-                            <h6 className="font-weight-bold blue-text">
-                                120$
-                            </h6>
-                        </MDBCardBody>
-                        </MDBCard>
-                    </MDBCol>
-                </MDBRow>
-            </section>
-        );
+                    </Link>
+                </MDBCol>
+            )
+        })
     }
     
 
@@ -142,11 +100,19 @@ class Home extends Component {
 
             <hr className="hr-text mt-5" data-content="New Arrivals" />
             <div className="container">
-                {this.EcommercePage()}
+                <section className="text-center my-5">
+                    <MDBRow>
+                        {this.renderNewArrival()}
+                    </MDBRow>
+                </section>
             </div>
             <hr className="hr-text mt-5" data-content="Best Seller" />
             <div className="container">
-                {this.EcommercePage()}
+                <section className="text-center my-5">
+                    <MDBRow>
+                        {this.renderNewArrival()}
+                    </MDBRow>
+                </section>
             </div>
             </div>
         )

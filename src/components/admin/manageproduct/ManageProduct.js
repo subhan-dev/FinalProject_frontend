@@ -24,24 +24,19 @@ class ManageProduct extends Component {
     }
     handleDelete = async (id) => {
         const res =  await axios.delete(`/products/${id}`)
-        if(typeof res.data === "object") {
-            Swal(
-                "Success",
-                "success"
-            )
-        }
         this.getProducts()
     }
     renderList = () => {
         return this.state.products.map(item => {
             return (
                 <tr key={item.id}>
-                    <td>{item.id}</td>
                     <td>{item.name}</td>
                     <td>{item.description}</td>
+                    <td>{item.name_category}</td>
+                    <td>{item.name_brand}</td>
                     <td>Rp.{item.price}</td>
-                    <td>4</td>
-                    <td><img className="list" src="https://shiningbright.co.id/wp-content/uploads/2019/07/tshirt_0331.jpg" alt={item.name} style={{width:'50px'}}></img></td>
+                    <td>{item.stock}</td>
+                    <td><img className="list" src={`http://localhost:2019/products/image/${item.image}`} alt={item.name} style={{width:'50px'}}></img></td>
                     <td>
                         <Link to={`/edit-product/${item.id}`}><button className="btn btn-primary mr-2">Edit</button></Link>
                         <button className="btn btn-danger" onClick={() => {this.handleDelete(item.id)}}>Delete</button>
@@ -67,9 +62,10 @@ class ManageProduct extends Component {
                     <table className="table table-hover mb-5 mt-4">
                         <thead>
                             <tr>
-                                <th scope="col">Id</th>
                                 <th scope="col">Name</th>
                                 <th scope="col">Desc</th>
+                                <th scope="col">Category</th>
+                                <th scope="col">Brand</th>
                                 <th scope="col">Price</th>
                                 <th scope="col">Stock</th>
                                 <th scope="col">PICTURE</th>

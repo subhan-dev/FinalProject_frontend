@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import {Link} from 'react-router-dom';
+import {Link, Redirect} from 'react-router-dom';
 import { MDBIcon } from "mdbreact";
 import './Product.css'
 import axios from '../../config/axios';
@@ -18,7 +18,9 @@ class Product extends Component {
     }
 
     increment = () => {
-        this.setState({quantity: this.state.quantity + 1})
+        if(this.state.productDetail.stock > this.state.quantity) {
+            this.setState({quantity: this.state.quantity + 1})
+        }
     }
     decrement = () => {
         if(this.state.quantity > 1) {
@@ -28,17 +30,19 @@ class Product extends Component {
 
     getProductDetail = async() => {
         try {
-           const res = await axios.get(`/products/${this.props.match.params.id}`)
-
+            console.log(this.props)
+           const res = await axios.get(`/get-products/${this.props.match.params.id}`)
+            // console.log(res.data)
            this.setState({productDetail: res.data[0]})
         } catch (error) {
             console.log(error)
         }
+        // console.log(this.props)
     }
 
     getSize = async () => {
         try {
-            const res = await axios.get(`/size/${this.props.match.params.id}`)
+            const res = await axios.get(`/size`)
             this.setState({size: res.data})
         } catch (error) {
             console.log(error)
@@ -65,24 +69,33 @@ class Product extends Component {
         if(!this.props.user.isAdmin && this.props.user.username) {
             if(this.state.size_id){
                 try {
-                    const res = await axios.post('/carts', {
-                        product_id: this.state.productDetail.id,
-                        user_id: this.props.user.id,
-                        size_id: this.state.size_id,
-                        quantity: this.state.quantity
-                    })
-                    console.log(res)
+                    const res = await axios.get(`/get-cart-user/${this.props.user.id}/${this.state.productDetail.id}/${this.state.size_id}`)
                     if(res.data.length > 0) {
+                        const resPatch = await axios.patch(`/carts/${res.data[0].id}`, {quantity: parseInt(res.data[0].quantity) + parseInt(this.state.quantity)})
+                        // console.log(resPatch)
                         Swal.fire(
                             'Ditambahkan',
                             'You clicked the button!',
                             'success'
                         )
+                    } else {
+                        const resPost = await axios.post('/carts', {
+                            product_id: this.state.productDetail.id,
+                            user_id: this.props.user.id,
+                            size_id: this.state.size_id,
+                            quantity: this.state.quantity
+                        })
+                        if(resPost.data.length > 0) {
+                            Swal.fire(
+                                'Ditambahkan',
+                                'You clicked the button!',
+                                'success'
+                            )
+                        }
                     }
                 } catch (error) {
                     console.log(error)
                 }
-                // alert('ok')
             }
         } else {
             this.setState({redirect: true})
@@ -90,14 +103,14 @@ class Product extends Component {
     }
 
     render() {
-        const { productDetail, quantity, size_id } = this.state
-        console.log(productDetail)
+        const { productDetail, quantity, size_id, redirect } = this.state
+        if(redirect) return <Redirect to="/login"></Redirect>
         return (
             <div className="container mt-5">
                 <div className="row justify-content-center">
                     <div className="col-md-5 ">
                         <div className="card">
-                            <img className="card-img-top" src={'https://shiningbright.co.id/wp-content/uploads/2019/07/tshirt_0331.jpg'} alt="Card image cap"/>
+                            <img className="card-img-top" src={`http://localhost:2019/products/image/${productDetail.image}`} alt="Card image cap"/>
                         </div>
                     </div>
                     <div className="col-md-5">
@@ -108,14 +121,13 @@ class Product extends Component {
                                 < div className="card-text">
                                 {productDetail.description}
                                 </div>
-                                <h6 className="mt-3 mb-0">size</h6>
-                                <select className="custom-select" value={this.state.size_id} onChange={(event) => this.setState({size_id: event.target.value})}>
-                                    <option value="">Choose your option</option>
+                                <select className="custom-select mb-3" value={size_id} onChange={(event) => this.setState({size_id: event.target.value})}>
+                                    <option value="">Choose your size</option>
                                     {this.renderSize()}
                                 </select>
                                 {/* <h5 className="mt-4">Stock</h5> */}
                                 <button type="button" className="btn btn-dark btn-sm" onClick={this.decrement}>-</button>
-                                <input type="text" style={{width: '50px'}} className="text-center" value={this.state.quantity} onChange={(event) => this.setState({quantity: parseInt(event.target.value)})}></input>
+                                <input type="text" style={{width: '50px'}} className="text-center" value={quantity} onChange={(event) => this.setState({quantity: parseInt(event.target.value)})} disabled></input>
                                 <button type="button" className="btn btn-dark btn-sm" onClick={this.increment}>+</button>
 
                                 <p><button type="button" className="btn btn-dark btn-md mt-5 btn-block" onClick={this.addToCart}>ADD TO CART</button></p>

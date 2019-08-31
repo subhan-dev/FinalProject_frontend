@@ -13,6 +13,7 @@ class EditProduct extends Component {
             price: '',
             brand_id: '',
             category_id: '',
+            stock: ''
         },
         redirect: false
     }
@@ -52,14 +53,14 @@ class EditProduct extends Component {
     renderCategory = () => {
         return this.state.category.map(item => {
             return (
-                <option key={item.id} value={item.id}>{item.name}</option>
+                <option key={item.id} value={item.id}>{item.name_category}</option>
             )
         })
     }
     renderBrand = () => {
         return this.state.brand.map(item => {
             return (
-                <option key={item.id} value={item.id}>{item.name}</option>
+                <option key={item.id} value={item.id}>{item.name_brand}</option>
             )
         })
     }
@@ -102,12 +103,12 @@ class EditProduct extends Component {
                 console.log(error)
             }
         } else {
-            alert('wadaw')
+            alert('isi data')
         }
 
     }
     render() {
-        const {name, description, price, brand_id, category_id} = this.state.productNew
+        const {name, description, price, brand_id, category_id, stock} = this.state.productNew
         if(this.state.redirect) return <Redirect to='/manage-product'></Redirect>
         return (
             <div className="container">
@@ -124,6 +125,10 @@ class EditProduct extends Component {
                     <div className="form-group col-2">
                         <label>Price</label>
                         <input type="number" className="form-control" placeholder="0" name="price" value={price} onChange={this.handleChange} />
+                    </div>
+                    <div className="form-group col-2">
+                        <label>Stock</label>
+                        <input type="number" className="form-control" placeholder="0" name="stock" value={stock} onChange={this.handleChange} />
                     </div>
                     <div className="form-group col-3">
                         <label>Brand</label>

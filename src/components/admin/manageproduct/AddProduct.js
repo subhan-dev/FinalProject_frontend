@@ -13,6 +13,7 @@ class AddProduct extends Component {
             price: '',
             brand_id: '',
             category_id: '',
+            stock: ''
         }
     }
 
@@ -43,14 +44,14 @@ class AddProduct extends Component {
     renderCategory = () => {
         return this.state.category.map(item => {
             return (
-                <option key={item.id} value={item.id}>{item.name}</option>
+                <option key={item.id} value={item.id}>{item.name_category}</option>
             )
         })
     }
     renderBrand = () => {
         return this.state.brand.map(item => {
             return (
-                <option key={item.id} value={item.id}>{item.name}</option>
+                <option key={item.id} value={item.id}>{item.name_brand}</option>
             )
         })
     }
@@ -64,13 +65,15 @@ class AddProduct extends Component {
     }
 
     handleAddProduct = async () => {
-        const {name, description, price, brand_id, category_id} = this.state.productNew
-        if(name && description && price && brand_id && category_id && this.image.files[0]) {
+        const {name, description, price, brand_id, category_id, stock} = this.state.productNew
+        console.log(stock)
+        if(name && description && price && stock && brand_id && category_id && this.image.files[0]) {
             const formData = new FormData()
             
             formData.append('name', name)
             formData.append('description', description)
             formData.append('price', price)
+            formData.append('stock', parseInt(stock))
             formData.append('brand_id', brand_id)
             formData.append('category_id', category_id)
             formData.append('image', this.image.files[0])
@@ -92,12 +95,14 @@ class AddProduct extends Component {
                                 price: '',
                                 brand_id: '',
                                 category_id: '',
+                                stock: ''
                             }
                         })
                         Swal.fire(
                             'Success',
                             'success'
                         )
+                        this.image.value = ''
                     }
             } catch (error) {
                 console.log(error)
@@ -105,7 +110,7 @@ class AddProduct extends Component {
         }
     }
     render() {
-        const {name, description, price, brand_id, category_id} = this.state.productNew
+        const {name, description, price, brand_id, category_id, stock} = this.state.productNew
         // console.log(this.image)
         return (
             <div className="container">
@@ -123,11 +128,15 @@ class AddProduct extends Component {
                         <label>Price</label>
                         <input type="number" className="form-control" placeholder="0" name="price" value={price} onChange={this.handleChange} />
                     </div>
+                    <div className="form-group col-2">
+                        <label>Stock</label>
+                        <input type="number" className="form-control" placeholder="0" name="stock" value={stock} onChange={this.handleChange} />
+                    </div>
                     <div className="form-group col-3">
                         <label>Brand</label>
                         {/* <div className="col-3"> */}
                             <select className="custom-select" value={brand_id} name="brand_id" onChange={this.handleChange}>
-                                <option>Choose</option>
+                                <option value="">Choose</option>
                                 {this.renderBrand()}
                             </select>
 
@@ -137,7 +146,7 @@ class AddProduct extends Component {
                         <label>Category</label>
                         {/* <div className="col-3"> */}
                             <select className="custom-select" value={category_id} name="category_id" onChange={this.handleChange}>
-                                <option>Choose</option>
+                                <option value="">Choose</option>
                                 {this.renderCategory()}
                             </select>
 

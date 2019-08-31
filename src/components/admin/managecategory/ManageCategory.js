@@ -40,7 +40,7 @@ class ManageCategory extends Component {
         // console.log(this.category.value)
         if(this.category.value) {
             try {
-                const res = await axios.post('/category', {name: this.category.value})
+                const res = await axios.post('/category', {name_category: this.category.value})
 
                 if(res.data.length>0) {
                     Swal.fire(
@@ -64,7 +64,7 @@ class ManageCategory extends Component {
         // console.log(this.category.value)
         if(this.brand.value) {
             try {
-                const res = await axios.post('/brand', {name: this.brand.value})
+                const res = await axios.post('/brand', {name_brand: this.brand.value})
 
                 if(res.data.length>0) {
                     Swal.fire(
@@ -98,7 +98,7 @@ class ManageCategory extends Component {
                 return (
                     <tr key={item.id}>
                         <td>{item.id}</td>
-                        <td>{item.name}</td>
+                        <td>{item.name_category}</td>
                         <td>
                             <button className="btn btn-primary mr-2" onClick={() => {this.setState({selectedId: item.id})}}>Edit</button>
                             <button className="btn btn-danger" onClick={() => this.handleDeleteCategory(item.id)}>Delete</button>
@@ -109,7 +109,7 @@ class ManageCategory extends Component {
                 return (
                     <tr key={item.id}>
                         <td>{item.id}</td>
-                        <td><input type="text" defaultValue={item.name} ref={(input) => {this.editCategory = input}}></input></td>
+                        <td><input type="text" defaultValue={item.name_category} ref={(input) => {this.editCategory = input}}></input></td>
                         <td>
                             <button className="btn btn-success mr-2" onClick={() => {this.handleEditCategory(item.id)}}>Save</button>
                             <button className="btn btn-warning" onClick={() => {this.setState({selectedId: 0})}}>Cancel</button>
@@ -125,7 +125,7 @@ class ManageCategory extends Component {
                 return (
                     <tr key={item.id}>
                         <td>{item.id}</td>
-                        <td>{item.name}</td>
+                        <td>{item.name_brand}</td>
                         <td>
                             <button className="btn btn-primary mr-2" onClick={() => {this.setState({selectedId2: item.id})}}>Edit</button>
                             <button className="btn btn-danger" onClick={() => this.handleDeleteBrand(item.id)}>Delete</button>
@@ -136,10 +136,10 @@ class ManageCategory extends Component {
                 return (
                     <tr key={item.id}>
                         <td>{item.id}</td>
-                        <td><input type="text" defaultValue={item.name} ref={(input) => {this.editBrand = input}}></input></td>
+                        <td><input type="text" defaultValue={item.name_brand} ref={(input) => {this.editBrand = input}}></input></td>
                         <td>
                             <button className="btn btn-success mr-2" onClick={() => {this.handleEditBrand(item.id)}}>Save</button>
-                            <button className="btn btn-warning" onClick={() => {this.setState({selectedId: 0})}}>Cancel</button>
+                            <button className="btn btn-warning" onClick={() => {this.setState({selectedId2: 0})}}>Cancel</button>
                         </td>
                     </tr>
                 )
@@ -149,7 +149,7 @@ class ManageCategory extends Component {
 
     handleEditCategory = async (id) => {
         try {
-            const res = await axios.patch(`/category/${id}`, {name: this.editCategory.value})
+            const res = await axios.patch(`/category/${id}`, {name_category: this.editCategory.value})
             if(res.data.length > 0) {
                 this.setState({selectedId:0})
                 this.getCategory()
@@ -166,7 +166,7 @@ class ManageCategory extends Component {
     }
     handleEditBrand = async (id) => {
         try {
-            const res = await axios.patch(`/brand/${id}`, {name: this.editBrand.value})
+            const res = await axios.patch(`/brand/${id}`, {name_brand: this.editBrand.value})
             if(res.data.length > 0) {
                 this.setState({selectedId2:0})
                 this.getBrand()
