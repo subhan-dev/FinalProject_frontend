@@ -43,7 +43,7 @@ class Profile extends Component {
             <div className="container mt-5">
                 <div className="row">
                     <div className="col-4">
-                        <div className="card" style={{width: '18rem'}}>
+                        <div className="card" style={{width: '280px'}}>
                             <img className="card-img-top" src={`http://localhost:2019/users/avatar/${user.avatar}`} alt="Card image cap" />
                             <div className="card-body">
                                 <h5 className="card-title">@{user.username}</h5>

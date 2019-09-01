@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import axios from '../../../config/axios'
 import {Link} from 'react-router-dom'
+import {connect} from 'react-redux'
 
 class HistoryTransaksi extends Component {
 

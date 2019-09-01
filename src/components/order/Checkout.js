@@ -88,7 +88,7 @@ class Checkout extends Component {
         const address = this.address.value
         const phone = this.phone.value
         const city = this.city.value
-        const kode_pos = this.city.value
+        const kode_pos = this.zip.value
 
         const bank_id = this.bank.value
         const kurir = this.kurir.value

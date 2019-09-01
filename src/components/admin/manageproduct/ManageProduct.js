@@ -50,7 +50,7 @@ class ManageProduct extends Component {
     render() {
         // console.log(this.state.products)
         const {user} = this.props
-        if(user.isAdmin === 1) {
+        if(user.isAdmin === 1 && user.username) {
             return (
                 <div className="container">
                     <h1 className="display-5 text-center">List Product</h1>

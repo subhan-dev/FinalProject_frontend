@@ -49,7 +49,7 @@ class Header extends Component {
                                 <NavDropdown.Item as={Link} to='/all-shop'>All</NavDropdown.Item>
                                 {this.renderCategory()}
                             </NavDropdown>
-                            <Nav.Link className="text-secondary" as={Link} to='/howtoorder'>HOW TO ORDER</Nav.Link>
+                            {/* <Nav.Link className="text-secondary" as={Link} to='/howtoorder'>HOW TO ORDER</Nav.Link> */}
                         </Nav>
                         <Nav.Link className="text-secondary nav-text" as={Link} to='/login'>LOGIN</Nav.Link>/
                         <Nav.Link className="text-secondary nav-text"  as={Link} to='/register'>REGISTER</Nav.Link>
@@ -69,7 +69,7 @@ class Header extends Component {
                             <NavDropdown.Item as={Link} to='/all-shop'>All</NavDropdown.Item>
                                 {this.renderCategory()}
                             </NavDropdown>
-                            <Nav.Link className="text-secondary" as={Link} to='/howtoorder'>HOW TO ORDER</Nav.Link>
+                            <Nav.Link className="text-secondary" as={Link} to='/list-order'>LIST ORDER</Nav.Link>
                         </Nav>
                         <Nav.Link className="text-secondary nav-text" as={Link} to='/cart'>
                             <i className="fa fa-shopping-cart mr-1" style={{fontSize:'1.2em'}}></i><span>0</span>

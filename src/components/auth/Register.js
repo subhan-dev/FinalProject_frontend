@@ -33,7 +33,7 @@ class Register extends Component {
 
             console.log(user)
             try {
-                const resGet = await axios.get(`/get-users/${user.username}/${user.email}`)
+                const resGet = await axios.get(`/gett-users/${user.username}/${user.email}`)
                 if(resGet.data.length > 0) {
                     Swal.fire({
                         type: 'error',

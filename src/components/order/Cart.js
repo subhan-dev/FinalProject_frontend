@@ -105,9 +105,14 @@ class Cart extends Component {
                             {/* <button type="button" className="btn btn-dark btn-sm">+</button>
                             <input type="text" style={{width: '50px'}} className="text-center" value="1"></input>
                             <button type="button" className="btn btn-dark btn-sm">-</button> */}
-                            <Link to="/checkout">
-                                <p><button type="button" className="btn btn-dark btn-md mt-5 btn-block">Checkout</button></p>
-                            </Link>
+                            {this.state.carts.length > 0 ?
+                                <Link to="/checkout">
+                                    <p><button type="button" className="btn btn-dark btn-md mt-5 btn-block">Checkout</button></p>
+                                </Link>
+                            :   <Link to="/checkout">
+                                    <p><button type="button" className="btn btn-dark btn-md mt-5 btn-block" disabled>Checkout</button></p>
+                                </Link>
+                            }
                             {/* <p className="card-text">Category</p> */}
                         </div>
                     </div>
