@@ -50,7 +50,7 @@ class DetailHistory extends Component {
     render() {
         console.log(this.state.detailTransaksi)
         const { detailTransaksi } = this.state
-        if(this.props.user.user && this.props.user.isAdmin) {
+        if(this.props.user.username && this.props.user.isAdmin) {
             return (
                 <div className="container mt-5">
                     <div className="row">

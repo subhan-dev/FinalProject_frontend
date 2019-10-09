@@ -44,3 +44,14 @@ export const onLogout = () =>{
         type:'LOGOUT_SUCCESS'
     }
 }
+
+export const getCart = (user_id) => {
+    return (dispatch) => {
+        axios.get(`/get-carts-length/${user_id}`).then(res => {
+            dispatch({
+                type: 'GET_CARTS',
+                payload: res.data
+            })
+        })
+    }
+}

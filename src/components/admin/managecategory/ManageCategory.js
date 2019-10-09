@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import axios from '../../../config/axios'
 import Swal from 'sweetalert2';
-import { async } from 'q';
+import {connect} from 'react-redux'
 
 class ManageCategory extends Component {
 
@@ -184,63 +184,71 @@ class ManageCategory extends Component {
 
 
     render() {
-        return (
-            <div className="container mt-5">
-                <div className="row">
-                    <div className="col-6">
-                    <form>
-                        <div class="form-group row">
-                            <label class="col-sm-2 col-form-label">Category</label>
-                            <div class="col-sm-10">
-                            <input type="text" class="form-control" placeholder="Category" ref={input => {this.category = input}}/>
+        if(this.props.user.username && this.props.user.isAdmin) {
+            return (
+                <div className="container mt-5">
+                    <div className="row">
+                        <div className="col-6">
+                        <form>
+                            <div class="form-group row">
+                                <label class="col-sm-2 col-form-label">Category</label>
+                                <div class="col-sm-10">
+                                <input type="text" class="form-control" placeholder="Category" ref={input => {this.category = input}}/>
+                                </div>
                             </div>
-                        </div>
-                    </form>
-                    <div className="text-right">
-                        <button className="btn btn-success" onClick={this.handleAddCategory}>Add</button>
-                    </div>
-                    <table className="table table-hover mb-5 mt-4">
-                        <thead>
-                            <tr>
-                                <th scope="col">Id</th>
-                                <th scope="col">Name</th>
-                                <th scope="col">Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {this.renderCategory()}
-                        </tbody>
-                    </table>
-                    </div>
-                    <div className="col-6">
-                    <form>
-                        <div class="form-group row">
-                            <label class="col-sm-2 col-form-label">Brand</label>
-                            <div class="col-sm-10">
-                            <input type="text" class="form-control" placeholder="Brand" ref={input => {this.brand = input}}/>
-                            </div>
-                        </div>
-                    </form>
+                        </form>
                         <div className="text-right">
-                            <button className="btn btn-success" onClick={this.handleAddBrand}>Add</button>
+                            <button className="btn btn-success" onClick={this.handleAddCategory}>Add</button>
                         </div>
-                    <table className="table table-hover mb-5 mt-4">
-                        <thead>
-                            <tr>
-                                <th scope="col">Id</th>
-                                <th scope="col">Name Brand</th>
-                                <th scope="col">Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {this.renderBrand()}
-                        </tbody>
-                    </table>
+                        <table className="table table-hover mb-5 mt-4">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Id</th>
+                                    <th scope="col">Name</th>
+                                    <th scope="col">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {this.renderCategory()}
+                            </tbody>
+                        </table>
+                        </div>
+                        <div className="col-6">
+                        <form>
+                            <div class="form-group row">
+                                <label class="col-sm-2 col-form-label">Brand</label>
+                                <div class="col-sm-10">
+                                <input type="text" class="form-control" placeholder="Brand" ref={input => {this.brand = input}}/>
+                                </div>
+                            </div>
+                        </form>
+                            <div className="text-right">
+                                <button className="btn btn-success" onClick={this.handleAddBrand}>Add</button>
+                            </div>
+                        <table className="table table-hover mb-5 mt-4">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Id</th>
+                                    <th scope="col">Name Brand</th>
+                                    <th scope="col">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {this.renderBrand()}
+                            </tbody>
+                        </table>
+                        </div>
                     </div>
                 </div>
-            </div>
-        )
+            )
+        }
+        return <h1 className="text-center" style={{fontSize: '350px'}}>404</h1>
+    }
+}
+const mapStateToProps = state => {
+    return {
+        user: state.auth
     }
 }
 
-export default ManageCategory
+export default connect(mapStateToProps)(ManageCategory)

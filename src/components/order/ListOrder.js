@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import {Link} from 'react-router-dom'
+import {Link, Redirect} from 'react-router-dom'
 import {connect} from 'react-redux'
 import axios from '../../config/axios'
 
@@ -50,6 +50,9 @@ class ListOrder extends Component {
                                 <button className="btn btn-primary mr-2" disabled>Upload</button>
                             </Link>
                         }
+                        <Link to={`detail-list-order/${item.id}`}>
+                            <button className="btn btn-secondary mr-2">Detail</button>
+                        </Link>
                     </td>
                 </tr>
             )
@@ -57,6 +60,7 @@ class ListOrder extends Component {
     }
 
     render() {
+        if(!this.props.user.username) return <Redirect to='/login'></Redirect>
         return (
             <div className="container mt-5">
                 <table className="table table-hover mb-5 mt-4">

@@ -1,8 +1,9 @@
 import React, { Component } from 'react'
 import axios from '../../config/axios';
 import {connect} from 'react-redux'
-import { Link } from 'react-router-dom';
+import { Link, Redirect } from 'react-router-dom';
 import Swal from 'sweetalert2';
+import {getCart} from '../../actions/index'
 
 class Cart extends Component {
 
@@ -27,9 +28,10 @@ class Cart extends Component {
     }
 
     handleDeleteCart = async (id) => {
-        console.log(id)
+        // console.log(id)
         const res = await axios.delete(`/carts-del/${id}`)
-        console.log(res.data)
+        // console.log(res.data)
+        this.props.getCart(this.props.user.id)
         this.getCart()
     }
 
@@ -39,9 +41,9 @@ class Cart extends Component {
                 <tr key={item.id}>
                     <td>{item.name}</td>
                     <td>{item.size_name}</td>
-                    <td>{item.price}</td>
+                    <td>Rp {item.price.toLocaleString('IN')}</td>
                     <td>{item.quantity}</td>
-                    <td>{item.quantity * item.price}</td>
+                    <td>Rp {(item.quantity * item.price).toLocaleString('IN')}</td>
                     <td>
                         <button className="btn btn-danger" onClick={() => this.handleDeleteCart(item.id)}>Deleted</button>
                     </td>
@@ -60,6 +62,7 @@ class Cart extends Component {
     }
 
     render() {
+        if(!this.props.user.username) return <Redirect to='/login'></Redirect>
         return (
             <div className="container mt-5">
                 <div className="row">
@@ -89,7 +92,7 @@ class Cart extends Component {
                                     <h5>Total</h5>
                                 </div>
                                 <div className="d-inline-block ml-5">
-                                    <h5>Rp {this.renderTotal()}</h5>
+                                    <h5>Rp {this.renderTotal().toLocaleString('IN')}</h5>
                                 </div>
                             </div>
                             <hr/>
@@ -128,4 +131,4 @@ const mapStateToProps = state => {
         user: state.auth
     }
 }
-export default connect(mapStateToProps)(Cart)
+export default connect(mapStateToProps, {getCart})(Cart)

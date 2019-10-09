@@ -16,6 +16,7 @@ class Header extends Component {
     }
     componentDidMount() {
         this.getCategory()
+        
     }
 
     getCategory = async () => {
@@ -35,8 +36,9 @@ class Header extends Component {
         })
     }
     render() {
+        // console.log(this.props.countCart)
         const { username, isAdmin } = this.props.user
-        console.log(isAdmin === 1)
+        // console.log(isAdmin === 1)
         if(username === '' && isAdmin === false) {
             return (
                 <Navbar expand="lg" >
@@ -44,15 +46,15 @@ class Header extends Component {
                     <Navbar.Toggle aria-controls="basic-navbar-nav" />
                     <Navbar.Collapse id="basic-navbar-nav">
                         <Nav className="mr-auto ml-auto nav-text">
-                            <Nav.Link className="text-secondary" as={Link} to='/'>HOME</Nav.Link>
+                            <Nav.Link className="black-text" as={Link} to='/'>HOME</Nav.Link>
                             <NavDropdown title="SHOP" >
                                 <NavDropdown.Item as={Link} to='/all-shop'>All</NavDropdown.Item>
                                 {this.renderCategory()}
                             </NavDropdown>
-                            {/* <Nav.Link className="text-secondary" as={Link} to='/howtoorder'>HOW TO ORDER</Nav.Link> */}
+                            {/* <Nav.Link className="black-text" as={Link} to='/howtoorder'>HOW TO ORDER</Nav.Link> */}
                         </Nav>
-                        <Nav.Link className="text-secondary nav-text" as={Link} to='/login'>LOGIN</Nav.Link>/
-                        <Nav.Link className="text-secondary nav-text"  as={Link} to='/register'>REGISTER</Nav.Link>
+                        <Nav.Link className="black-text nav-text" as={Link} to='/login'>LOGIN</Nav.Link>/
+                        <Nav.Link className="black-text nav-text"  as={Link} to='/register'>REGISTER</Nav.Link>
                     </Navbar.Collapse>
                 </Navbar>
             )
@@ -63,18 +65,19 @@ class Header extends Component {
                     <Navbar.Toggle aria-controls="basic-navbar-nav" />
                     <Navbar.Collapse id="basic-navbar-nav">
                         <Nav className="mr-auto ml-auto nav-text">
-                        <Nav.Link className="text-secondary" as={Link} to='/profile'>PROFILE</Nav.Link>
-                            <Nav.Link className="text-secondary" as={Link} to='/'>HOME</Nav.Link>
+                        <Nav.Link className="black-text" as={Link} to='/profile'>PROFILE</Nav.Link>
+                            <Nav.Link className="black-text" as={Link} to='/'>HOME</Nav.Link>
                             <NavDropdown title="SHOP" >
                             <NavDropdown.Item as={Link} to='/all-shop'>All</NavDropdown.Item>
                                 {this.renderCategory()}
                             </NavDropdown>
-                            <Nav.Link className="text-secondary" as={Link} to='/list-order'>LIST ORDER</Nav.Link>
+                            <Nav.Link className="black-text" as={Link} to='/list-order'>LIST ORDER</Nav.Link>
                         </Nav>
-                        <Nav.Link className="text-secondary nav-text" as={Link} to='/cart'>
-                            <i className="fa fa-shopping-cart mr-1" style={{fontSize:'1.2em'}}></i><span>0</span>
+                        <Nav.Link className="black-text nav-text" as={Link} to='/cart'>
+                            <i className="fa fa-shopping-cart mr-1" style={{fontSize:'1.2em'}}></i>
+                            <i>{this.props.countCart.arrCarts.length}</i>
                         </Nav.Link>
-                        <Nav.Link className="text-secondary nav-text" onClick={this.props.onLogout}>LOGOUT</Nav.Link>
+                        <Nav.Link className="black-text nav-text" onClick={this.props.onLogout}>LOGOUT</Nav.Link>
                     </Navbar.Collapse>
                 </Navbar>
             )
@@ -85,13 +88,13 @@ class Header extends Component {
                     <Navbar.Toggle aria-controls="basic-navbar-nav" />
                     <Navbar.Collapse id="basic-navbar-nav">
                         <Nav className="mr-auto ml-auto nav-text">
-                            <Nav.Link className="text-secondary" as={Link} to='/manage-product'>Manage Product</Nav.Link>
-                            <Nav.Link className="text-secondary" as={Link} to='/manage-category'>Manage Category</Nav.Link>
-                            <Nav.Link className="text-secondary" as={Link} to='/manage-order'>Manage Order</Nav.Link>
-                            <Nav.Link className="text-secondary" as={Link} to='/history-transaksi'>History Transaksi</Nav.Link>
-                            {/* <Nav.Link className="text-secondary" as={Link} to='/manage-stock'>Manage Stock</Nav.Link> */}
+                            <Nav.Link className="black-text" as={Link} to='/manage-product'>Manage Product</Nav.Link>
+                            <Nav.Link className="black-text" as={Link} to='/manage-category'>Manage Category</Nav.Link>
+                            <Nav.Link className="black-text" as={Link} to='/manage-order'>Manage Order</Nav.Link>
+                            <Nav.Link className="black-text" as={Link} to='/history-transaksi'>History Transaksi</Nav.Link>
+                            {/* <Nav.Link className="black-text" as={Link} to='/manage-stock'>Manage Stock</Nav.Link> */}
                         </Nav>
-                        <Nav.Link className="text-secondary nav-text" onClick={this.props.onLogout}>LOGOUT</Nav.Link>
+                        <Nav.Link className="black-text nav-text" onClick={this.props.onLogout}>LOGOUT</Nav.Link>
                     </Navbar.Collapse>
                 </Navbar>
             )
@@ -101,7 +104,8 @@ class Header extends Component {
 
 const mapStateToProps = state => {
     return {
-        user: state.auth
+        user: state.auth,
+        countCart: state.carts
     }
 }
 

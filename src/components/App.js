@@ -16,8 +16,9 @@ import ListOrder from './order/ListOrder'
 import PaymentUpload from './order/PaymentUpload'
 import Profile from './profile/Profile'
 import ShopCategory from './shop/ShopCategory'
+import DetailListOrder from './order/DetailListOrder'
 
-import { keepLogin } from '../actions/index'
+import { keepLogin, getCart } from '../actions/index'
 
 import ManageProduct from './admin/manageproduct/ManageProduct'
 import AddProduct from './admin/manageproduct/AddProduct'
@@ -38,8 +39,15 @@ class App extends Component {
 
         if(user !== undefined){
             this.props.keepLogin(user)
+            this.props.getCart(user.id)
         }
     }
+
+    // componentDidMount() {
+    //     if(user !== undefined){
+    //         this.props.getCart(user.id)
+    //     }
+    // }
 
     render() {
         return (
@@ -58,6 +66,7 @@ class App extends Component {
                         <Route path="/list-order" component={ListOrder}/>
                         <Route path="/payment-upload/:order_id" component={PaymentUpload}/>
                         <Route path="/profile" component={Profile}/>
+                        <Route path="/detail-list-order/:id" component={DetailListOrder}/>
 
                         <Route path="/manage-product" component={ManageProduct}/>
                         <Route path="/add-product" component={AddProduct}/>
@@ -77,4 +86,4 @@ class App extends Component {
     }
 }
 
-export default connect(null, { keepLogin })(App)
+export default connect(null, { keepLogin, getCart })(App)

@@ -1,7 +1,10 @@
 import React, { Component } from 'react'
 import axios from '../../config/axios'
+import axios2 from '../../config/axios2'
 import {connect} from 'react-redux'
 import { Redirect } from 'react-router-dom';
+import Select from "react-dropdown-select";
+import {Typeahead} from 'react-bootstrap-typeahead';
 
 class Checkout extends Component {
 
@@ -9,7 +12,25 @@ class Checkout extends Component {
         carts: [],
         bank: [],
         shipping: [],
-        order: false
+        order: false,
+        provinsi: '',
+        prov: [],
+        city: [],
+        kota: '',
+        courier: '',
+        cost: [],
+        service: null,
+        serviceTime: ''
+    }
+
+    getProvinsi = async () => {
+        try {
+            const res = await axios.get(`/get-provinsi`)
+            // console.log(res.data)
+            this.setState({prov: res.data.results})
+        } catch (error) {
+            console.log(error)
+        }
     }
 
     getBank = async () => {
@@ -40,21 +61,61 @@ class Checkout extends Component {
             console.log(error)
         }
     }
-
+    getCity = async () => {
+        if(this.state.provinsi) {
+            try {
+                const res = await axios.get(`/get-city/${this.state.provinsi}`)
+                // console.log(res.data)
+                this.setState({city: res.data.results})
+            } catch (error) {
+                console.log(error)
+            }
+        } else {
+            this.setState({city: []})
+        }
+    }
+    getCost = async () => {
+        if(this.state.provinsi && this.state.kota && this.state.courier) {
+            try {
+                const res = await axios.post(`/get-cost`, null, {
+                    params: {
+                        origin: `151`,
+                        tujuan: this.state.kota,
+                        berat: 1500,
+                        courier: this.state.courier.toLowerCase()
+                    }
+                })
+                console.log(res.data)
+                this.setState({cost: res.data.results})
+            } catch (error) {
+                console.log(error)
+            }
+        }
+        console.log(this.state.kota)
+    }
     componentDidMount () {
         this.getCart()
         this.getBank()
         this.getShipping()
-        
+        this.getProvinsi()
+        // this.getCity()
     }
-
+    componentDidUpdate(prevProps, prevState, snapshot){
+        // console.log(prevState)
+        if(prevState.provinsi !== this.state.provinsi) {
+            this.getCity()
+        }
+        if(prevState.courier !== this.state.courier) {
+            this.getCost()
+        }
+    }
     renderCart = () => {
         return this.state.carts.map(item => {
             return (
                 <tr key={item.id}>
                     <td>{item.name}</td>
                     <td>{item.quantity}</td>
-                    <td>{item.price * item.quantity}</td>
+                    <td>Rp {(item.price * item.quantity).toLocaleString('IN')}</td>
                 </tr>
             )
         })
@@ -65,7 +126,9 @@ class Checkout extends Component {
         this.state.carts.forEach(item => {
             totalCart += (item.price * item.quantity)
         })
-
+        if(this.state.service) {
+            return totalCart + parseInt(this.state.service.cost[0].value)
+        }
         return totalCart
     }
     renderBank = () => {
@@ -78,10 +141,11 @@ class Checkout extends Component {
     renderShipping = () => {
         return this.state.shipping.map(item => {
             return (
-                <option key={item.id} value={item.id}>{item.kurir}</option>
+                <option key={item.id} value={item.kurir}>{item.kurir}</option>
             )
         })
     }
+
 
     handleOrder = async () => {
         const penerima = this.name.value
@@ -134,6 +198,8 @@ class Checkout extends Component {
     // }
 
     render() {
+        // console.log(this.state.kota)
+        if(!this.props.user.username) return <Redirect to='/login'></Redirect>
         if(this.state.order) return <Redirect to="/list-order"></Redirect>
         return (
             <div className="container mt-5">
@@ -159,17 +225,39 @@ class Checkout extends Component {
                                 </div>
                             </div>
                             <div className="form-row">
-                                <div className="form-group col-md-6">
-                                <label for="inputCity">City</label>
-                                <input type="text" className="form-control" id="inputCity" placeholder="city" ref={(input) => this.city = input}/>
+                                <div className="form-group col-md-5">
+                                    <label for="inputAddresss">Provinsi</label>
+                                    <Typeahead
+                                        labelKey="province"
+                                        options={this.state.prov}
+                                        placeholder="Choose Provisi"
+                                        onChange={e => {
+                                            if(e.length > 0){
+                                                this.setState({provinsi: e[0].province_id})
+                                            } else {
+                                                this.setState({provinsi: ''})
+                                            }
+                                        }}
+                                    />
                                 </div>
-                                {/* <div className="form-group col-md-4">
-                                <label for="inputState">State</label>
-                                <select id="inputState" className="form-control">
-                                    <option selected>Choose...</option>
-                                    <option>...</option>
-                                </select>
-                                </div> */}
+                            </div>
+                            <div className="form-row">
+                                <div className="form-group col-md-6">
+                                    <label for="inputCity">City</label>
+                                    {/* <input type="text" className="form-control" id="inputCity" placeholder="city" ref={(input) => this.city = input}/> */}
+                                    <Typeahead
+                                        labelKey="city_name"
+                                        options={this.state.city}
+                                        placeholder="Choose City"
+                                        onChange={e => {
+                                            if(e.length > 0){
+                                                this.setState({kota: e[0].city_id})
+                                            } else {
+                                                this.setState({kota: ''})
+                                            }
+                                        }}
+                                    />
+                                </div>
                                 <div className="form-group col-md-2">
                                 <label for="inputZip">Zip</label>
                                 <input type="text" className="form-control" id="inputZip" placeholder="ZIP" ref={(input) => this.zip = input}/>
@@ -195,15 +283,15 @@ class Checkout extends Component {
                         <div className="card-body">
                             <h2 className="card-title">Total</h2>
                             <hr/>
-                            {/* <div className="mt-3">
+                            <div className="mt-3">
                                 <div className="d-inline-block mr-4">
-                                    <h5>Subtotal</h5>
+                                    <h5>{this.state.cost.length > 0 ? this.state.courier : 'Kurir'}</h5>
                                 </div>
-                                <div className="d-inline-block ml-4">
-                                    <h5>Rp</h5>
+                                <div className="d-inline-block ml-5">
+                                    <h5>Rp {this.state.service ? this.state.service.cost[0].value : '-'}</h5>
                                 </div>
-                            </div> */}
-                            {/* <hr/> */}
+                            </div>
+                            <hr/>
                             <div className="mt-3">
                                 <div className="d-inline-block mr-4">
                                     <h5>Total</h5>
@@ -215,11 +303,24 @@ class Checkout extends Component {
                             <hr/>
                             <div className="form-group">
                                 <label for="inputState">Kurir</label>
-                                <select id="inputState" className="form-control" ref={(input) => this.kurir = input}>
+                                {/* <select id="inputState" className="form-control" ref={(input) => this.kurir = input}> */}
+                                <select id="inputState" className="form-control" onChange={e => this.setState({courier: e.target.value})}>
                                     <option value="">Choose...</option>
                                     {this.renderShipping()}
                                 </select>
                             </div>
+                            { this.state.cost.length > 0 &&
+                                <div className="form-group">
+                                    <label for="inputState">Service</label>
+                                    {/* <select id="inputState" className="form-control" ref={(input) => this.kurir = input}> */}
+                                    <select id="inputState" className="form-control" onChange={e => this.setState({service: this.state.cost[0].costs[e.target.value]})}>
+                                        <option value="">Choose...</option>
+                                        {this.state.cost[0].costs.map((item, index) => {
+                                            return <option value={index}>{item.service}</option>
+                                        })}
+                                    </select>
+                                </div>
+                            }
                             <div className="form-group">
                                 <label for="inputState">Bank</label>
                                 <select id="inputState" className="form-control" ref={(input) => this.bank = input}>

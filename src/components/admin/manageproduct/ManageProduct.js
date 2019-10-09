@@ -12,7 +12,7 @@ class ManageProduct extends Component {
 
     getProducts = async () => {
         try {
-            const res = await axios.get('/products')
+            const res = await axios.get('/products-manage')
             this.setState({products: res.data})
         } catch (error) {
             console.log(error)
@@ -24,6 +24,10 @@ class ManageProduct extends Component {
     }
     handleDelete = async (id) => {
         const res =  await axios.delete(`/products/${id}`)
+        Swal.fire(
+            'Data berhasil dihapus',
+            'success'
+        )
         this.getProducts()
     }
     renderList = () => {
@@ -34,7 +38,7 @@ class ManageProduct extends Component {
                     <td>{item.description}</td>
                     <td>{item.name_category}</td>
                     <td>{item.name_brand}</td>
-                    <td>Rp.{item.price}</td>
+                    <td>{item.price.toLocaleString('IN')}</td>
                     <td>{item.stock}</td>
                     <td><img className="list" src={`http://localhost:2019/products/image/${item.image}`} alt={item.name} style={{width:'50px'}}></img></td>
                     <td>
@@ -50,7 +54,7 @@ class ManageProduct extends Component {
     render() {
         // console.log(this.state.products)
         const {user} = this.props
-        if(user.isAdmin === 1 && user.username) {
+        if(user.isAdmin && user.username) {
             return (
                 <div className="container">
                     <h1 className="display-5 text-center">List Product</h1>

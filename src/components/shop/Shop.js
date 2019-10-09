@@ -1,22 +1,77 @@
 import React, { Component } from "react";
 import { MDBCollapse, Button } from "mdbreact";
-import {  MDBRow, MDBCol, MDBCard, MDBCardImage, MDBCardBody, MDBBadge, MDBCollapseHeader } from "mdbreact";
+import {  MDBRow, MDBCol, MDBCard, MDBCardImage, MDBCardBody, MDBIcon, MDBCollapseHeader } from "mdbreact";
+import { MDBDropdown, MDBDropdownToggle, MDBDropdownMenu, MDBDropdownItem } from "mdbreact";
 import {Link} from 'react-router-dom'
 import axios from '../../config/axios'
 import { async } from "q";
 
 class Shop extends Component {
-    state={
-        collapseID: "",
-        collapseID2: "",
-        products: [],
-        brand: [],
-        search: {
-            searchString: "",
-            min: "",
-            max: ""
+    constructor() {
+        super();
+        this.state={
+            collapseID: "",
+            collapseID2: "",
+            products: [],
+            brand: [],
+            search: {
+                searchString: "",
+                min: "",
+                max: ""
+            },
+            checkedItems: [],
+            sort: '',
+            currentPage: 1,
+            perPage: 9
+            
         }
-
+        this.handleClick = this.handleClick.bind(this);
+    }
+    
+    getPopularity = () => {
+        axios.get('/get-popularity').then(res => {
+            // console.log(res.data)
+            this.setState({products: res.data})
+        })
+    }
+    getRating = () => {
+        axios.get('/get-rating').then(res => {
+            // console.log(res.data)
+            this.setState({products: res.data})
+        })
+    }
+    getNewness = () => {
+        axios.get('/get-newness').then(res => {
+            // console.log(res.data)
+            this.setState({products: res.data})
+        })
+    }
+    getPriceLow = () => {
+        axios.get('/get-pricelow').then(res => {
+            // console.log(res.data)
+            this.setState({products: res.data})
+        })
+    }
+    getPriceHigh = () => {
+        axios.get('/get-pricehigh').then(res => {
+            // console.log(res.data)
+            this.setState({products: res.data})
+        })
+    }
+    componentDidUpdate(prevProps, prevState, snapshot) {
+        if(prevState.sort !== this.state.sort) {
+            if(this.state.sort === 'Popularity') {
+                this.getPopularity()
+            } else if(this.state.sort === 'Rating') {
+                this.getRating()
+            } else if(this.state.sort === 'Newness') {
+                this.getNewness()
+            } else if(this.state.sort === 'Price: low to high') {
+                this.getPriceLow()
+            } else if(this.state.sort === 'Price: high to low') {
+                this.getPriceHigh()
+            }
+        }
     }
 
     toggleCollapse = collapseID => () =>
@@ -47,7 +102,7 @@ class Shop extends Component {
 
     getProducts = async () => {
         try {
-            const res = await axios.get(`/products`)
+            const res = await axios.get(`/products2`)
             this.setState({products: res.data})
         } catch (error) {
             console.log(error)
@@ -57,7 +112,7 @@ class Shop extends Component {
     renderProduct =(products) =>{
         return products.map(item => {
             return (
-                <MDBCol lg="4" className="mb-lg-5 mb-4">
+                <MDBCol lg="4" className="mb-lg-5 mb-4" key={item.id}>
                     <Link to={`/product-detail/${item.id}`}>
                         <MDBCard className="align-items-center">
                         <MDBCardImage
@@ -67,12 +122,12 @@ class Shop extends Component {
                             overlay="white-slight"
                             style={{height: '215px'}}
                         />
-                        <MDBCardBody className="text-center text-secondary">
+                        <MDBCardBody className="text-center grey-text">
                             <strong>
                                 {item.name}
                             </strong>
                             <h6>
-                                {item.price}
+                                IDR {item.price.toLocaleString('IN')}
                             </h6>
                         </MDBCardBody>
                         </MDBCard>
@@ -81,12 +136,31 @@ class Shop extends Component {
             )
         })
     }
+    handleChangeBrand = (event) => {
+        if(event.target.checked && !this.state.checkedItems.includes(event.target.value)) {
+            this.setState({
+                checkedItems: [...this.state.checkedItems, event.target.value]
+            })
+        } else if(!event.target.checked && this.state.checkedItems.includes(event.target.value)) {
+            let array = [...this.state.checkedItems]
+            var index = array.indexOf(event.target.value)
+            if (index !== -1) {
+                array.splice(index, 1);
+                this.setState({checkedItems: array});
+            }
+        }
+    }
 
     renderBrand = () => {
         return this.state.brand.map(item => {
             return (
                 <label className="form-check" key={item.id}>
-                    <input className="form-check-input" type="checkbox" value=""/>
+                    <input className="form-check-input" 
+                        type="checkbox" 
+                        value={item.id}
+                        // isChecked={item.id === this.state.cek}
+                        onChange={this.handleChangeBrand}
+                    />
                     <span className="form-check-label">
                         {item.name_brand}
                     </span>
@@ -102,11 +176,16 @@ class Shop extends Component {
             }
         })
     }
-    
+    handleClick(event) {
+        this.setState({
+            currentPage: Number(event.target.id)
+        })
+    }
 
     render() {
+        // console.log(this.state.checkedItems)
         let product = this.state.products
-        const { collapseID, collapseID2, search } = this.state;
+        const { collapseID, collapseID2, search, perPage, currentPage } = this.state;
         // console.log(search)
         let cariStr = search.searchString.trim().toLowerCase();
         let minimal = parseInt(search.min)
@@ -143,9 +222,75 @@ class Shop extends Component {
                 }
             });
         }
+        if(this.state.checkedItems.length > 0) {
+            // console.log(product)
+            // this.state.checkedItems.forEach(data => {
+            //     product = product.filter(item => {
+            //         return item.brand_id === parseInt(data)
+            //     })
+
+            // })
+            product = product.filter(item => {
+                return this.state.checkedItems.includes(String(item.brand_id))
+            })
+        }
+
+        const indexOfLast = currentPage * perPage;
+        const indexOfFirst = indexOfLast - perPage;
+        const currentProduct = product.slice(indexOfFirst, indexOfLast);
+
+        const pageNumbers = [];
+        for (let i = 1; i <= Math.ceil(product.length / perPage); i++) {
+            pageNumbers.push(i);
+        }
+
+        // const renderPageNumbers = pageNumbers.map(number => {
+        //     return (
+        //         <li
+        //             key={number}
+        //             id={number}
+        //             onClick={this.handleClick}
+        //         >
+        //             {number}
+        //         </li>
+        //     );
+        // });
+
+        const renderPageNumbers = pageNumbers.map(number => {
+            return (
+                <button
+                    key={number}
+                    id={number}
+                    onClick={this.handleClick}
+                >
+                    {number}
+                </button>
+            );
+        });
         
         return (
             <div className="container mt-5">
+                <div className="d-flex">
+                    <div class="p-2">Home / Shop</div>
+                    <div class="ml-auto">
+                        <MDBDropdown>
+                            <MDBDropdownToggle caret color="white">
+                                { !this.state.sort ? 'Sort ' : this.state.sort + ' ' }
+                                <MDBIcon icon="filter" />
+                            </MDBDropdownToggle>
+                            <MDBDropdownMenu basic>
+                                <MDBDropdownItem onClick={e => this.setState({sort: 'Popularity'})}>Popularity</MDBDropdownItem>
+                                <MDBDropdownItem onClick={e => this.setState({sort: 'Rating'})}>Average Rating</MDBDropdownItem>
+                                <MDBDropdownItem onClick={e => this.setState({sort: 'Newness'})}>Newness</MDBDropdownItem>
+                                <MDBDropdownItem onClick={e => this.setState({sort: 'Price: high to low'})}>Price: high to low</MDBDropdownItem>
+                                <MDBDropdownItem onClick={e => this.setState({sort: 'Price: low to high'})}>Price: low to high</MDBDropdownItem>
+                                {/* <MDBDropdownItem divider /> */}
+                            </MDBDropdownMenu>
+                        </MDBDropdown>
+                    </div>
+                </div>
+                <br/><br/>
+                
                 <div className="row">
                 <MDBCol lg="3" md="2" className="mb-lg-0 mb-4">
                     <div className="card">
@@ -185,12 +330,14 @@ class Shop extends Component {
                 </MDBCol>
                     <div className="col-9">
                     <div className="row">
-                        {this.renderProduct(product)}
+                        {this.renderProduct(currentProduct)}
                        
                     </div>
                     </div>
                 </div>
-                
+                <ul id="page-numbers">
+                    {renderPageNumbers}
+                </ul>
             </div>
         );
     }

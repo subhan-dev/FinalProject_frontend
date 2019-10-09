@@ -60,8 +60,10 @@ class PaymentUpload extends Component {
     }
 
     render() {
-        const {kurir, name_bank, norek, total_harga} = this.state.order
+        const {kurir, name_bank, norek, total_harga, user_upload} = this.state.order
         if(this.state.redirect) return <Redirect to='/list-order'></Redirect>
+        if(user_upload) return <h1 className="container mt-5">Waiting</h1>
+        if(!this.props.user.username) return <Redirect to="/login"></Redirect>
         return (
             <div className="container mt-5">
                 <div className="row justify-content-center">

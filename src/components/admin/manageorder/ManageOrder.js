@@ -1,6 +1,8 @@
 import React, { Component } from 'react'
 import axios from '../../../config/axios';
 import {Link} from 'react-router-dom'
+import {connect} from 'react-redux'
+
 export class ManageOrder extends Component {
 
     state = {
@@ -47,9 +49,9 @@ export class ManageOrder extends Component {
                     <td>{item.total_harga}</td>
                     <td><a href={`http://localhost:2019/payment-upload/${item.user_upload}`}><img src={`http://localhost:2019/payment-upload/${item.user_upload}`} alt="bukti" style={{width: '100px'}}></img></a></td>
                     <td>
-                        <Link to={`detail-transaksi/${item.id}`}>
+                        {/* <Link to={`detail-transaksi/${item.id}`}>
                             <button className="btn btn-success mr-2">Detail</button>
-                        </Link>
+                        </Link> */}
                         <button className="btn btn-primary mr-2" onClick={() => this.handleAccOrder(item.id)}>Acc</button>
                         <button className="btn btn-danger mr-2" onClick={() => this.handleDeclineOrder(item.id)}>Decl</button>
                     </td>
@@ -58,26 +60,34 @@ export class ManageOrder extends Component {
         })
     }
     render() {
-        return (
-            <div className="container mt-5">
-                <table className="table table-hover mb-5 mt-4">
-                    <thead>
-                        <tr>
-                            <th scope="col">Order Number</th>
-                            <th scope="col">Order Date</th>
-                            <th scope="col">Total</th>
-                            <th scope="col">Bukti Transfer</th>
-                            <th scope="col">Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {this.renderOrder()}
-
-                    </tbody>
-                </table>
-            </div>
-        )
+        if(this.props.user.username && this.props.user.isAdmin) {
+            return (
+                <div className="container mt-5">
+                    <table className="table table-hover mb-5 mt-4">
+                        <thead>
+                            <tr>
+                                <th scope="col">Order Number</th>
+                                <th scope="col">Order Date</th>
+                                <th scope="col">Total</th>
+                                <th scope="col">Bukti Transfer</th>
+                                <th scope="col">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {this.renderOrder()}
+    
+                        </tbody>
+                    </table>
+                </div>
+            )
+        }
+        return <h1 className="text-center" style={{fontSize: '350px'}}>404</h1>
+    }
+}
+const mapStateToProps = state => {
+    return {
+        user: state.auth
     }
 }
 
-export default ManageOrder
+export default connect(mapStateToProps)(ManageOrder)

@@ -15,8 +15,8 @@ class ShopCategory extends Component {
             searchString: "",
             min: "",
             max: ""
-        }
-
+        },
+        checkedItems: []
     }
 
     toggleCollapse = collapseID => () =>
@@ -82,12 +82,12 @@ class ShopCategory extends Component {
                             overlay="white-slight"
                             style={{height: '215px'}}
                         />
-                        <MDBCardBody className="text-center text-secondary">
+                        <MDBCardBody className="text-center grey-text">
                             <strong>
                                 {item.name}
                             </strong>
                             <h6>
-                                {item.price}
+                                IDR {item.price.toLocaleString('IN')}
                             </h6>
                         </MDBCardBody>
                         </MDBCard>
@@ -96,12 +96,31 @@ class ShopCategory extends Component {
             )
         })
     }
+    handleChangeBrand = (event) => {
+        if(event.target.checked && !this.state.checkedItems.includes(event.target.value)) {
+            this.setState({
+                checkedItems: [...this.state.checkedItems, event.target.value]
+            })
+        } else if(!event.target.checked && this.state.checkedItems.includes(event.target.value)) {
+            let array = [...this.state.checkedItems]
+            var index = array.indexOf(event.target.value)
+            if (index !== -1) {
+                array.splice(index, 1);
+                this.setState({checkedItems: array});
+            }
+        }
+    }
 
     renderBrand = () => {
         return this.state.brand.map(item => {
             return (
                 <label className="form-check" key={item.id}>
-                    <input className="form-check-input" type="checkbox" value=""/>
+                    <input className="form-check-input" 
+                        type="checkbox" 
+                        value={item.id}
+                        // isChecked={item.id === this.state.cek}
+                        onChange={this.handleChangeBrand}
+                    />
                     <span className="form-check-label">
                         {item.name_brand}
                     </span>
@@ -158,6 +177,18 @@ class ShopCategory extends Component {
                 }
             });
         }
+        if(this.state.checkedItems.length > 0) {
+            console.log(product)
+            // this.state.checkedItems.forEach(data => {
+            //     product = product.filter(item => {
+            //         return item.brand_id === parseInt(data)
+            //     })
+
+            // })
+            product = product.filter(item => {
+                return this.state.checkedItems.includes(String(item.brand_id))
+            })
+        } 
         
         return (
             <div className="container mt-5">

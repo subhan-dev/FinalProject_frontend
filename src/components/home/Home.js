@@ -12,7 +12,8 @@ import { Link } from 'react-router-dom';
 class Home extends Component {
 
     state = {
-        newArrival: []
+        newArrival: [],
+        bestSeller: []
     }
     getNewArrival = async() => {
         try {
@@ -22,10 +23,18 @@ class Home extends Component {
             console.log(error)
         }
     }
+    getBestSeller = async() => {
+        try {
+            const res = await axios.get('/products-bestseller')
+            this.setState({bestSeller: res.data})
+        } catch (error) {
+            console.log(error)
+        }
+    }
 
     componentDidMount() {
         this.getNewArrival()
-
+        this.getBestSeller()
     }
 
     renderNewArrival = () => {
@@ -41,12 +50,12 @@ class Home extends Component {
                             overlay="white-slight"
                             style={{height: '215px'}}
                         />
-                        <MDBCardBody className="text-center text-secondary">
+                        <MDBCardBody className="text-center grey-text">
                             <strong>
                                 {item.name}
                             </strong>
                             <h6>
-                                {item.price}
+                                IDR {item.price.toLocaleString('IN')}
                             </h6>
                         </MDBCardBody>
                         </MDBCard>
@@ -55,7 +64,33 @@ class Home extends Component {
             )
         })
     }
-    
+    renderBestSeller = () => {
+        return this.state.bestSeller.map(item => {
+            return (
+                <MDBCol lg="3" md="6" className="mb-lg-0 mb-4">
+                    <Link to={`/product-detail/${item.id}`}>
+                        <MDBCard className="align-items-center">
+                        <MDBCardImage
+                            src={`http://localhost:2019/products/image/${item.image}`}
+                            top
+                            alt={item.name}
+                            overlay="white-slight"
+                            style={{height: '215px'}}
+                        />
+                        <MDBCardBody className="text-center grey-text">
+                            <strong>
+                                {item.name}
+                            </strong>
+                            <h6>
+                                IDR {item.price.toLocaleString('IN')}
+                            </h6>
+                        </MDBCardBody>
+                        </MDBCard>
+                    </Link>
+                </MDBCol>
+            )
+        })
+    }
 
     render() {
         return (
@@ -98,7 +133,7 @@ class Home extends Component {
                 </MDBCarouselInner>
             </MDBCarousel>
 
-            <hr className="hr-text mt-5" data-content="New Arrivals" />
+            <hr className="hr-text" style={{marginTop: '100px'}} data-content="New Arrivals" />
             <div className="container">
                 <section className="text-center my-5">
                     <MDBRow>
@@ -110,7 +145,7 @@ class Home extends Component {
             <div className="container">
                 <section className="text-center my-5">
                     <MDBRow>
-                        {this.renderNewArrival()}
+                        {this.renderBestSeller()}
                     </MDBRow>
                 </section>
             </div>

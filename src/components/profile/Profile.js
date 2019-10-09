@@ -1,7 +1,8 @@
 import React, { Component } from 'react'
 import {connect} from 'react-redux'
 import axios from '../../config/axios';
-import { async } from 'q';
+import {Redirect} from 'react-router-dom'
+import profile from './default.jpg'
 
 
 class Profile extends Component {
@@ -38,49 +39,55 @@ class Profile extends Component {
     }
     render() {
         const {user, edit} = this.state
-        console.log(user)
-        return (
-            <div className="container mt-5">
-                <div className="row">
-                    <div className="col-4">
-                        <div className="card" style={{width: '280px'}}>
-                            <img className="card-img-top" src={`http://localhost:2019/users/avatar/${user.avatar}`} alt="Card image cap" />
-                            <div className="card-body">
-                                <h5 className="card-title">@{user.username}</h5>
-                                {edit && <input type="file" class="form-control-file" ref={(input) => this.image = input}/>}
+        // console.log(user)
+        if(this.props.user.username && !this.props.user.isAdmin) {
+            return (
+                <div className="container mt-5">
+                    <div className="row">
+                        <div className="col-4">
+                            <div className="card" style={{width: '280px'}}>
+                                {/* <img className="card-img-top" src={`http://localhost:2019/users/avatar/${user.avatar}`} alt="Card image cap" /> */}
+                                {
+                                    !user.avatar ? <img className="card-img-top" src={profile} alt="Card image cap" /> : <img className="card-img-top" src={`http://localhost:2019/users/avatar/${user.avatar}`} alt="Card image cap" />
+                                }
+                                <div className="card-body">
+                                    <h5 className="card-title">@{user.username}</h5>
+                                    {edit && <input type="file" class="form-control-file" ref={(input) => this.image = input}/>}
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div className="col-2">
-                    <div class="card" style={{width: '18rem'}}>
-                        
-                        <ul class="list-group list-group-flush">
-                            <li class="list-group-item">Name</li>
-                            <li class="list-group-item">Username</li>
-                            <li class="list-group-item">Email</li>
-                        </ul>
-                    </div>
-                    {!edit ? <button className="btn btn-primary mt-4" onClick={() => this.setState({edit: true})}>Edit Profile</button> :
-                        <div>
-                            <button className="btn btn-success mt-4" onClick={this.handleEdit}>Save</button>
-                            <button className="btn btn-warning mt-4" onClick={() => this.setState({edit: false})}>Cancel</button>
-                        </div>
-                    }
-                    </div>
-                    <div className="col-4">
-                    <div class="card" style={{width: '18rem'}}>
-                        
-                        <ul class="list-group list-group-flush">
-                            {edit ? <li class="list-group-item"><input type="text" className="form-control form-control-sm" defaultValue={user.fullname} ref={(input) => this.newName = input}></input></li> : <li class="list-group-item">{user.fullname}</li>}
+                        <div className="col-2">
+                        <div class="card" style={{width: '18rem'}}>
                             
-                            <li class="list-group-item">{user.username}</li>
-                            {edit ? <li class="list-group-item"><input type="text" className="form-control form-control-sm" defaultValue={user.email} ref={(input) => this.newEmail = input}></input></li> : <li class="list-group-item">{user.email}</li>}
-                        </ul>
-                    </div>
+                            <ul class="list-group list-group-flush">
+                                <li class="list-group-item">Name</li>
+                                <li class="list-group-item">Username</li>
+                                <li class="list-group-item">Email</li>
+                            </ul>
+                        </div>
+                        {!edit ? <button className="btn btn-primary mt-4" onClick={() => this.setState({edit: true})}>Edit Profile</button> :
+                            <div>
+                                <button className="btn btn-success mt-4" onClick={this.handleEdit}>Save</button>
+                                <button className="btn btn-warning mt-4" onClick={() => this.setState({edit: false})}>Cancel</button>
+                            </div>
+                        }
+                        </div>
+                        <div className="col-4">
+                        <div class="card" style={{width: '18rem'}}>
+                            
+                            <ul class="list-group list-group-flush">
+                                {edit ? <li class="list-group-item"><input type="text" className="form-control form-control-sm" defaultValue={user.fullname} ref={(input) => this.newName = input}></input></li> : <li class="list-group-item">{user.fullname}</li>}
+                                
+                                <li class="list-group-item">{user.username}</li>
+                                {edit ? <li class="list-group-item"><input type="text" className="form-control form-control-sm" defaultValue={user.email} ref={(input) => this.newEmail = input}></input></li> : <li class="list-group-item">{user.email}</li>}
+                            </ul>
+                        </div>
+                        </div>
                     </div>
                 </div>
-            </div>
-        )
+            )
+        }
+        return <Redirect to="/login"></Redirect>
     }
 }
 

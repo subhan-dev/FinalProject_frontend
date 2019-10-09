@@ -6,6 +6,10 @@ const init = {
     isAdmin: false
 }
 
+const initCart = {
+    arrCarts: []
+}
+
 const userReducer = (state = init, action) => {
     switch (action.type) {
         case 'LOGIN_SUCCESS':
@@ -27,8 +31,20 @@ const userReducer = (state = init, action) => {
     }   
 }
 
+const userCarts = (state = initCart, action) => {
+    switch(action.type) {
+        case 'GET_CARTS':
+            return {
+                arrCarts: action.payload
+            }
+        default:
+            return state
+}
+}
+
 export default combineReducers(
     {
         auth: userReducer,
+        carts: userCarts
     }
 )
